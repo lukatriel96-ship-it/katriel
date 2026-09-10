@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Depois de publicar, substitua pelo domínio real:
+# Sitemap: https://seu-dominio.com.br/sitemap.xml
