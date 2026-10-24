@@ -1,0 +1,35 @@
+name: Gerar Post Automatico BPC
+
+on:
+  schedule:
+    # Roda toda terça e quinta-feira às 08:00 da manhã (Horário UTC / Ajuste conforme preferir)
+    - cron: '0 8 * * 2,4'
+  workflow_dispatch: # Permite que você clique em um botão no GitHub para testar quando quiser
+
+jobs:
+  gerar-e-publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar código do site
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependências da API do Google
+        run: npm install @google/genai
+
+      - name: Rodar script de criação de conteúdo por IA
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/gerar-post.js
+
+      - name: Enviar novo post para o GitHub
+        run: |
+          git config --global user.name "Bot Katriel & Freitas"
+          git config --global user.email "bot@katrielfreitasadvogados.com.br"
+          git add .
+          git commit -m "feat(blog): novo artigo automático sobre BPC gerado por IA [skip ci]" || exit 0
+          git push
